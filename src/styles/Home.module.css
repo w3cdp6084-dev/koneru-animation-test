@@ -127,3 +127,22 @@
     filter: invert(1);
   }
 }
+
+
+.boxWrap{
+  background-color: #E1E0E2;
+  width: 100%;
+  height: 100vh;
+    display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.box1{
+    display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #FFFFFF;
+  width: 80%;
+  height: 80%;
+  margin:  0 auto;
+}
