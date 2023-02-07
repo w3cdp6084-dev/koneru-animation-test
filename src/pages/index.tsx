@@ -1,8 +1,67 @@
 import Head from 'next/head'
-import Image from 'next/image'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/dist/ScrollTrigger'
 import styles from '../styles/Home.module.css'
+import React, {useEffect, useRef} from 'react'
 
 export default function Home() {
+  gsap.registerPlugin(ScrollTrigger)
+
+  const pagesWrapperRef = useRef<HTMLDivElement | null >(null);
+  const pagesRef = useRef<HTMLDivElement | null >(null);
+  const didEffect = React.useRef(false);
+
+  const setupGsap = (pagesElement: HTMLDivElement, pagesWrapperElement: HTMLDivElement) => {
+    gsap.to(pagesElement, {
+      x: () => -(pagesElement.clientWidth - pagesWrapperElement.clientWidth),
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '#horizontal-scroll-section',
+        start: 'top top',
+        end: () => `+=${pagesElement.clientWidth - pagesWrapperElement.clientWidth}`,
+        scrub: true,
+        pin: true,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+      },
+    })
+    gsap.to('main', {
+      scrollTrigger: {
+        trigger: '#horizontal-scroll-section',
+        start: 'top center',
+        end: () => `+=${pagesElement.clientWidth - pagesWrapperElement.clientWidth + 200}`,
+        scrub: true, 
+        onEnter: () => gsap.to('main', {
+          backgroundColor: '#000',
+          duration: 1.4
+        }),
+        onLeave: () => gsap.to('main', {
+          backgroundColor: '#fff',
+          duration: 1.4
+        }),
+        onEnterBack: () => gsap.to('main', {
+          backgroundColor: '#000',
+          duration: 1.4
+        }),
+        onLeaveBack: () => gsap.to('main', {
+          backgroundColor: '#fff',
+          duration: 1.4
+        }),
+      },
+    })
+}
+
+  useEffect(() => {
+    if (didEffect.current) return 
+    didEffect.current = true;
+    const pagesElement = pagesRef?.current;
+    if(!pagesElement) return
+    
+    const pagesWrapperElement = pagesWrapperRef?.current;
+    if(!pagesWrapperElement) return
+    setupGsap(pagesElement, pagesWrapperElement)
+  }, [])
+
   return (
     <div className={styles.container}>
       <Head>
@@ -11,27 +70,28 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <div className={styles.boxWrap}>
-          
+      <main className={styles.main} id="horizontal-scroll-section">
+        <div className={styles.boxWrap} ref={pagesWrapperRef}>
+          <div className={styles.box1} ref={pagesRef}>
+            Test1
+          </div>
           <div className={styles.box1}>
-            Test
+            Test2
+          </div>
+          <div className={styles.box1}>
+            Test3
+          </div>
+          <div className={styles.box1}>
+            Test1
+          </div>
+          <div className={styles.box1}>
+            Test2
+          </div>
+          <div className={styles.box1}>
+            Test3
           </div>
         </div>
       </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
     </div>
   )
 }
